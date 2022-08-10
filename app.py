@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 def create_app(config: Type[BaseConfig]) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config)
+    app.app_context().push()
+
     app.register_blueprint(movie_blueprint)
 
     db.init_app(app)
