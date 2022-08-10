@@ -1,10 +1,11 @@
 import os
-from app import db, create_app
+from app import create_app
+from container import db
 from const import BASE_DIR
 from utils import _load_json_file
-from blueprints.movie.models.movie import (Movie,
-                                           Director,
-                                           Genre)
+from blueprints.movie.dao.model.movie import Movie
+from blueprints.movie.dao.model.director import Director
+from blueprints.movie.dao.model.genre import Genre
 from config import read_env
 
 FIXTURES_DIR = os.path.join(BASE_DIR, 'blueprints', 'movie', 'db', 'fixtures')

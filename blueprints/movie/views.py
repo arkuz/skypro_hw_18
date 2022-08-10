@@ -1,22 +1,27 @@
-import logging
 from flask import (Blueprint,
                    request)
 from flask_restx import (Api,
                          Resource)
 
 import const
-from blueprints.movie.models.movie import (Movie,
-                                           Director,
-                                           Genre)
-from blueprints.movie.schemes.movie import (movie_schema,
-                                            movies_schema,
-                                            director_schema,
-                                            directors_schema,
-                                            genre_schema,
-                                            genres_schema)
-from blueprints.movie.models.movie import db
+from blueprints.movie.dao.model.movie import Movie
+from blueprints.movie.dao.model.director import Director
+from blueprints.movie.dao.model.genre import Genre
+from container import db
 
-logger = logging.getLogger(__name__)
+from blueprints.movie.dao.model.director import DirectorSchema
+from blueprints.movie.dao.model.genre import GenreSchema
+from blueprints.movie.dao.model.movie import MovieSchema
+
+movie_schema = MovieSchema()
+movies_schema = MovieSchema(many=True)
+
+director_schema = DirectorSchema()
+directors_schema = DirectorSchema(many=True)
+
+genre_schema = GenreSchema()
+genres_schema = GenreSchema(many=True)
+
 movie_blueprint = Blueprint('movie_blueprint', __name__)
 
 api = Api()

@@ -3,14 +3,14 @@ import os.path
 from typing import Type
 import const
 from flask import Flask
-from blueprints.movie.models.movie import db
+from container import db
 from blueprints.movie.views import movie_blueprint, api
 from config import BaseConfig
 
 logging.basicConfig(filename=os.path.join(const.BASE_DIR, 'log', 'log.log'),
                     level=logging.INFO,
                     format='%(asctime)s - [%(levelname)s] - %(name)s -'
-                           ' (%(filename)s).%(funcName)s(%(lineno)d) - %(message)s')
+                           ' (%(filename)s).%(funcName)s(%(lineno)d) - %(message)s')  # noqa
 logger = logging.getLogger(__name__)
 
 
