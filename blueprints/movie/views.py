@@ -5,9 +5,8 @@ from flask_restx import (Api,
 
 import const
 from blueprints.movie.dao.model.movie import Movie
-from blueprints.movie.dao.model.director import Director
 from blueprints.movie.dao.model.genre import Genre
-from container import db
+from container import db, director_dao
 
 from blueprints.movie.dao.model.director import DirectorSchema
 from blueprints.movie.dao.model.genre import GenreSchema
@@ -128,43 +127,35 @@ class DirectorsView(Resource):
         """
         Возвращает список режиссеров
         """
-        directors = Director.query.all()
+        directors = director_dao.get_all()
         return directors_schema.dump(directors), 200
 
     def post(self):
         """
         Добавляет режиссера
         """
-        director = Director(**director_schema.load(request.json))
-        db.session.add(director)
-        db.session.commit()
+        director_dao.create(**director_schema.load(request.json))
         return "", 201
 
 
 @director_ns.route('/<int:did>/')
 class DirectorView(Resource):
-    def put(self, did: int):
+    def patch(self, did: int):
         """
         Обновление режиссера
         """
-        director = Director.query.get(did)
+        director_data = director_schema.load(request.json)
+        director = director_dao.update(did, director_data)
         if director:
-            req_json = request.json
-            if "name" in req_json:
-                director.director_id = req_json.get("name")
-                db.session.add(director)
-                db.session.commit()
-                return "", 204
+            return "", 204
         return "", 404
 
     def delete(self, did: int):
         """
         Удаление режиссера
         """
-        director = Director.query.get(did)
+        director = director_dao.delete(did)
         if director:
-            db.session.delete(director)
-            db.session.commit()
             return "", 204
         return "", 404
 
