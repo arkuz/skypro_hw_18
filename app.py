@@ -1,11 +1,14 @@
 import logging
 import os.path
-from typing import Type
 import const
+from typing import Type
 from flask import Flask
+from blueprints.movie.views.director_view import director_ns
+from blueprints.movie.views.genre_view import genre_ns
+from blueprints.movie.views.movie_view import movie_ns
 from database import db
-from blueprints.movie.views import (movie_blueprint,
-                                    api)
+from blueprints.movie import (movie_blueprint,
+                              api)
 from config import BaseConfig
 
 logging.basicConfig(filename=os.path.join(const.BASE_DIR, 'log', 'log.log'),
@@ -23,6 +26,10 @@ def create_app(config: Type[BaseConfig]) -> Flask:
     app.register_blueprint(movie_blueprint)
 
     db.init_app(app)
+
+    api.add_namespace(director_ns)
+    api.add_namespace(genre_ns)
+    api.add_namespace(movie_ns)
     api.init_app(app)
 
     return app
