@@ -23,7 +23,7 @@ class GenreDAO(BaseDAO):
         genre = self.get_one(id)
         if genre:
             if "name" in data:
-                genre.genre_id = data.get("name")
+                genre.name = data.get("name")
                 self.session.add(genre)
                 self.session.commit()
                 return genre

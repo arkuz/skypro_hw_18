@@ -59,7 +59,7 @@ class MoviesView(Resource):
         """
         Добавляет фильм
         """
-        movie_dao.create(**movie_schema.load(request.json))
+        movie_dao.create(movie_schema.dump(request.json))
         return "", 201
 
 
@@ -79,8 +79,8 @@ class MovieView(Resource):
         """
         Обновление фильма
         """
-        movie_data = director_schema.load(request.json)
-        movie = director_dao.update(mid, movie_data)
+        movie_data = movie_schema.load(request.json)
+        movie = movie_dao.update(mid, movie_data)
         if movie:
             return "", 204
         return "", 404
@@ -109,7 +109,7 @@ class DirectorsView(Resource):
         """
         Добавляет режиссера
         """
-        director_dao.create(**director_schema.load(request.json))
+        director_dao.create(director_schema.dump(request.json))
         return "", 201
 
 
@@ -148,7 +148,7 @@ class GenresView(Resource):
         """
         Добавляет жанр
         """
-        genre_dao.create(**genre_schema.load(request.json))
+        genre_dao.create(genre_schema.dump(request.json))
         return "", 201
 
 

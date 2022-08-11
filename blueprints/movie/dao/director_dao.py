@@ -23,7 +23,7 @@ class DirectorDAO(BaseDAO):
         director = self.get_one(id)
         if director:
             if "name" in data:
-                director.director_id = data.get("name")
+                director.name = data.get("name")
                 self.session.add(director)
                 self.session.commit()
                 return director
