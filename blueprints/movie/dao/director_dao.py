@@ -19,14 +19,11 @@ class DirectorDAO(BaseDAO):
         self.session.commit()
         return director
 
-    def update(self, id: int, data: dict) -> Director | None:
-        director = self.get_one(id)
+    def update(self, director: Director) -> Director | None:
         if director:
-            if "name" in data:
-                director.name = data.get("name")
-                self.session.add(director)
-                self.session.commit()
-                return director
+            self.session.add(director)
+            self.session.commit()
+            return director
         return None
 
     def delete(self, id: int) -> Director | None:

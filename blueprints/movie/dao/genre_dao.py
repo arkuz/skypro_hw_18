@@ -19,14 +19,11 @@ class GenreDAO(BaseDAO):
         self.session.commit()
         return genre
 
-    def update(self, id: int, data: dict) -> Genre | None:
-        genre = self.get_one(id)
+    def update(self, genre: Genre) -> Genre | None:
         if genre:
-            if "name" in data:
-                genre.name = data.get("name")
-                self.session.add(genre)
-                self.session.commit()
-                return genre
+            self.session.add(genre)
+            self.session.commit()
+            return genre
         return None
 
     def delete(self, id: int) -> Genre | None:

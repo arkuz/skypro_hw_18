@@ -19,23 +19,8 @@ class MovieDAO(BaseDAO):
         self.session.commit()
         return movie
 
-    def update(self, id: int, data: dict) -> Movie | None:
-        movie = self.get_one(id)
+    def update(self, movie: Movie) -> Movie | None:
         if movie:
-            if "title" in data:
-                movie.title = data.get("title")
-            if "description" in data:
-                movie.description = data.get("description")
-            if "trailer" in data:
-                movie.trailer = data.get("trailer")
-            if "year" in data:
-                movie.year = data.get("year")
-            if "rating" in data:
-                movie.rating = data.get("rating")
-            if "genre_id" in data:
-                movie.genre_id = data.get("genre_id")
-            if "director_id" in data:
-                movie.director_id = data.get("director_id")
             self.session.add(movie)
             self.session.commit()
             return movie
@@ -49,11 +34,11 @@ class MovieDAO(BaseDAO):
             return movie
         return None
 
-    def get_movies_by_director(self, did) -> [Movie]:
+    def get_movies_by_director(self, did: int) -> [Movie]:
         return Movie.query.filter(Movie.director_id == did).all()
 
-    def get_movies_by_genre(self, gid) -> [Movie]:
+    def get_movies_by_genre(self, gid: int) -> [Movie]:
         return Movie.query.filter(Movie.genre_id == gid).all()
 
-    def get_movies_by_year(self, year) -> [Movie]:
+    def get_movies_by_year(self, year: int) -> [Movie]:
         return Movie.query.filter(Movie.year == year).all()

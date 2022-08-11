@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from database import db
 
 
-class BaseDAO(ABC):
+class BaseService(ABC):
 
     @abstractmethod
     def get_one(self, id: int):
@@ -17,7 +16,7 @@ class BaseDAO(ABC):
         pass
 
     @abstractmethod
-    def update(self, model: db.Model):
+    def update(self, id: int, data: dict):
         pass
 
     @abstractmethod
