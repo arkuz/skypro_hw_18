@@ -3,8 +3,9 @@ import os.path
 from typing import Type
 import const
 from flask import Flask
-from container import db
-from blueprints.movie.views import movie_blueprint, api
+from database import db
+from blueprints.movie.views import (movie_blueprint,
+                                    api)
 from config import BaseConfig
 
 logging.basicConfig(filename=os.path.join(const.BASE_DIR, 'log', 'log.log'),
