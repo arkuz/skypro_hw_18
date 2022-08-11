@@ -27,7 +27,7 @@ pip install -r requirements.txt
 
  - Объявляем переменные окружения
 ```bash
-export PROJECT_DIR=/path_to_project/lesson17_project_source
+export PROJECT_DIR=/path_to_project/skypro_hw_18
 export PYTHONPATH=$PROJECT_DIR
 export FLASK_APP=run     
 export FLASK_ENV=development   
