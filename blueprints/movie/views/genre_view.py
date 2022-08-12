@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, url_for
 from flask_restx import (Resource,
                          Namespace)
 from container import genre_service
@@ -23,12 +23,21 @@ class GenresView(Resource):
         """
         Добавляет жанр
         """
-        genre_service.create(genre_schema.dump(request.json))
-        return "", 201
+        genre = genre_service.create(genre_schema.dump(request.json))
+        return "", 201, {
+            'Location': f"{url_for('genres_genres_view')}{genre.id}"}
 
 
 @genre_ns.route('/<int:gid>/')
 class GenreView(Resource):
+
+    def get(self, gid: int):
+        """
+        Возвращает жанр по id
+        """
+        genre = genre_service.get_one(gid)
+        return genre_schema.dump(genre), 200
+
     def put(self, gid: int):
         """
         Обновление жанра

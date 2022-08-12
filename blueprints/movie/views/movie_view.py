@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, url_for
 from flask_restx import (Resource,
                          Namespace)
 from container import movie_service
@@ -41,8 +41,9 @@ class MoviesView(Resource):
         """
         Добавляет фильм
         """
-        movie_service.create(movie_schema.dump(request.json))
-        return "", 201
+        movie = movie_service.create(movie_schema.dump(request.json))
+        return "", 201, {
+            'Location': f"{url_for('movies_movies_view')}{movie.id}"}
 
 
 @movie_ns.route('/<int:mid>/')
