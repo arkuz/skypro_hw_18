@@ -1,5 +1,6 @@
 import os
 from app import create_app
+from blueprints.movie.dao.model.user import User
 from container import db
 from const import BASE_DIR
 from utils import _load_json_file
@@ -37,6 +38,13 @@ def add_genres() -> None:
     db.session.commit()
 
 
+def add_users() -> None:
+    users = load_dump()['users']
+    prepared_genres = [User(**user) for user in users]
+    db.session.add_all(prepared_genres)
+    db.session.commit()
+
+
 def init_db() -> None:
     config = read_env()
     app = create_app(config)
@@ -46,6 +54,7 @@ def init_db() -> None:
         add_movies()
         add_directors()
         add_genres()
+        add_users()
 
 
 if __name__ == '__main__':

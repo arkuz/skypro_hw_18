@@ -6,6 +6,7 @@ from flask import Flask
 from blueprints.movie.views.director_view import director_ns
 from blueprints.movie.views.genre_view import genre_ns
 from blueprints.movie.views.movie_view import movie_ns
+from blueprints.movie.views.user_view import user_ns
 from database import db
 from blueprints.movie import (movie_blueprint,
                               api)
@@ -30,6 +31,7 @@ def create_app(config: Type[BaseConfig]) -> Flask:
     api.add_namespace(director_ns)
     api.add_namespace(genre_ns)
     api.add_namespace(movie_ns)
+    api.add_namespace(user_ns)
     api.init_app(app)
 
     return app
