@@ -1,11 +1,9 @@
 ## Описание
-Пет проект с правильной архитектурой приложения (Blueprints, слой DAO, слой Services, отдельные views в неймспейсах, Модели, Схемы, Серриализация, Десерриализация, Class Based Views).
+Пет проект с правильной архитектурой приложения (Blueprints, слой DAO, слой Services, отдельные views в неймспейсах, Модели, Схемы, Серриализация, Десерриализация, Class Based Views, Авторизация).
 
 Таблицы: Фильмы - Жанры - Режиссеры
 
-Стек: Flask + RESTx + SQLAlchemy + Marshmallow.
-
-
+Стек: Flask + RESTx + SQLAlchemy + Marshmallow + JWT.
 
 ### Требования к ПО
 - Python 3.10
@@ -44,11 +42,42 @@ python flask run
 ```
 4. Примеры запросов
 ```bash
-GET http://127.0.0.1:5000/movies/
-GET http://127.0.0.1:5000/directors/1/
-DELETE http://127.0.0.1:5000/genres/5/
-...
+Получить токен по логину и паролю
+
+POST http://127.0.0.1:5000/auth
+{
+	"username": "ivan",
+	"password": "qwerty",
+}
 ```
+
+```bash
+Создать пользователя
+
+POST http://127.0.0.1:5000/users
+Authorization: Bearer token_here
+{
+	"username": "ivan",
+	"password": "qwerty",
+	"role": "admin"
+}
+```
+
+```bash
+Получить список фильмов
+
+GET http://127.0.0.1:5000/movies/
+Authorization: Bearer token_here
+```
+
+```bash
+Удалить жанр
+
+DELETE http://127.0.0.1:5000/genres/5/
+Authorization: Bearer token_here
+```
+...
+
 ## Задание
 
 В этом задании вам нужно будет написать проект для онлайн-кинотеатра, разложив его по папочкам и слоям.
@@ -186,6 +215,114 @@ DELETE http://127.0.0.1:5000/genres/5/
 - [ ]  POST /movies — создать фильм.
 - [ ]  PUT /movies/1 — изменить информацию о фильме.
 - [ ]  DELETE /movies/1 — удалить фильм.
+
+### Шаг 8. Создайте пользователя
+
+Создайте модель и схему пользователя и добавьте к ней CRUD (views с методами `GET/POST/PUT`). 
+
+Описание модели пользователя:
+
+```python
+class User(db.Model):
+	__tablename__ = 'user'
+	id = db.Column(db.Integer, primary_key=True)
+	username = db.Column(db.String)
+	password = db.Column(db.String)
+	role = db.Column(db.String)
+```
+
+### Шаг 8.1. Добавьте методы генерации хеша пароля пользователя
+
+Хешируем пароли с помощью `pbkdf2_hmac`.
+
+```python
+config.py
+
+# Добавляем константы в файл constants.py
+PWD_HASH_SALT = b'secret here'
+PWD_HASH_ITERATIONS = 100_000
+
+# services/user.py, class UserService для сложной архитектуры
+# models.py, class User для простой архитектуры
+
+# Метод хеширование пароля
+from constants import PWD_HASH_SALT, PWD_HASH_ITERATIONS
+
+def get_hash(password):
+        return hashlib.pbkdf2_hmac(
+            'sha256',
+            password.encode('utf-8'),  # Convert the password to bytes
+            PWD_HASH_SALT,
+            PWD_HASH_ITERATIONS
+        ).decode("utf-8", "ignore")
+```
+### Шаг 9. Добавьте эндпоинты аутентификации
+
+`POST` /auth/ — возвращает `access_token` и `refresh_token` или `401` - Anonymous (кто угодно)
+
+`PUT` /auth/ — возвращает `access_token` и `refresh_token` или `401` - Anonymous (кто угодно)
+
+
+`POST /auth` — получает логин и пароль из Body запроса в виде JSON, далее проверяет соотвествие с данными в БД (есть ли такой пользователь, такой ли у него пароль)
+и если всё оk — генерит пару access_token и refresh_token и отдает их в виде JSON.
+
+`PUT /auth` — получает refresh_token из Body запроса в виде JSON, далее проверяет refresh_token и если он не истек и валиден — генерит пару access_token и refresh_token и отдает их в виде JSON.
+
+### **Шаг 10. Ограничьте доступ на чтение**
+
+Защитите (ограничьте доступ) так, чтобы к некоторым эндпоинтам был ограничен доступ для запросов без токена. Для этого создайте декоратор `auth_required` и декорируйте им методы, которые нужно защитить.
+
+`GET` /directors/ + /directors/id - Authorized Required
+
+`GET` /movies/ + /movies/id - Authorized Required
+
+`GET` /genres/ + /genres/id - Authorized Required
+
+### Шаг 11. Ограничьте доступ на редактирование
+
+Защитите (ограничьте доступ) так, чтобы к некоторым эндпоинтам был доступ только у администраторов ( `user.role == admin` ) Для этого создайте декоратор `admin_required` и декорируйте им  методы, которые нужно защитить.
+
+`POST/PUT/DELETE`  /movies/ + /movies/id - Authorized Required + Role admin Required
+
+`POST/PUT/DELETE`  /genres/ + /genres/id - Authorized Required + Role admin Required
+
+`POST/PUT/DELETE`  /directors/ + /directors/id - Authorized Required + Role admin Required
+
+### Шаг 7. Добавьте регистрацию пользователя
+
+`POST` /users/ — создает пользователя - Anonymous (кто угодно)
+
+Пример запроса:
+```
+POST /users/
+
+{
+	"username": "ivan",
+	"password": "qwerty",
+	"role": "admin"
+}
+```
+
+### Шаг 8. Создайте  пользователей в БД
+
+Создайте пользователей в БД — двух обычных и одного администратора.
+
+Для простой архитектуры:
+
+Добавьте в app.py этот кусок кода и вызовите функцию `create_data` в `register_extensions`.
+
+```python
+def create_data(app, db):
+    with app.app_context():
+        db.create_all()
+
+        u1 = User(username="vasya", password="my_little_pony", role="user")
+        u2 = User(username="oleg", password="qwerty", role="user")
+        u3 = User(username="oleg", password="P@ssw0rd", role="admin")
+
+        with db.session.begin():
+            db.session.add_all([u1, u2, u3])
+```
 
 ---
 [SkyPro](https://sky.pro) - [Python Developer](https://sky.pro/courses/programming/python-web-course)
