@@ -359,18 +359,18 @@
   ],
   "users": [
     {
-      "username": "vasya",
-      "password": "12345",
+      "username": "ivan",
+      "password": "K5RXAyQxULV4GYiNfu8VmaQZgzzH0BlukMcak+z9PaA=",
       "role": "user"
     },
     {
       "username": "oleg",
-      "password": "qwerty",
+      "password": "X4m6gLOLCsRpRwiJPPebU54gAK+nb9vrL1J+UbTts48=",
       "role": "user"
     },
     {
       "username": "admin",
-      "password": "nimda",
+      "password": "83HROk3xDwbsyJG7JG5BZ+43wz6DyksjkQ7cgc1R+kc=",
       "role": "admin"
     }
   ]

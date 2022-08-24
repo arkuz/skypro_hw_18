@@ -13,6 +13,9 @@ class UserDAO(BaseDAO):
     def get_all(self) -> [User]:
         return self.session.query(User).all()
 
+    def get_by_username(self, username):
+        return self.session.query(User).filter(User.username == username).first()
+
     def create(self, data: dict) -> User:
         user = User(**data)
         self.session.add(user)

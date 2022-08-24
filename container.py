@@ -7,6 +7,7 @@ from blueprints.movie.services.director_service import DirectorService
 from blueprints.movie.services.genre_service import GenreService
 from blueprints.movie.services.movie_service import MovieService
 from blueprints.movie.services.user_service import UserService
+from blueprints.movie.services.auth_service import AuthService
 
 director_dao = DirectorDAO(db.session)
 director_service = DirectorService(director_dao)
@@ -19,3 +20,5 @@ movie_service = MovieService(movie_dao)
 
 user_dao = UserDAO(db.session)
 user_service = UserService(user_dao)
+
+auth_service = AuthService(user_service)

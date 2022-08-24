@@ -40,8 +40,8 @@ def add_genres() -> None:
 
 def add_users() -> None:
     users = load_dump()['users']
-    prepared_genres = [User(**user) for user in users]
-    db.session.add_all(prepared_genres)
+    prepared_users = [User(**user) for user in users]
+    db.session.add_all(prepared_users)
     db.session.commit()
 
 

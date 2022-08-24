@@ -3,6 +3,8 @@ from flask_restx import (Resource,
                          Namespace)
 from container import user_service
 from blueprints.movie.dao.model.user import UserSchema
+from helpers.auth_helper import (auth_required,
+                                 admin_required)
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -20,6 +22,7 @@ user_ns = Namespace('users')
 @user_ns.route('/')
 class UsersView(Resource):
 
+    @auth_required
     def get(self):
         """
         Возвращает список пользователей
@@ -27,6 +30,7 @@ class UsersView(Resource):
         users = user_service.get_all()
         return users_schema_column_only.dump(users), 200
 
+    @admin_required
     def post(self):
         """
         Добавляет пользователя
@@ -39,6 +43,7 @@ class UsersView(Resource):
 @user_ns.route('/<int:did>/')
 class UserView(Resource):
 
+    @auth_required
     def get(self, did: int):
         """
         Возвращает пользователя по id
@@ -46,6 +51,7 @@ class UserView(Resource):
         user = user_service.get_one(did)
         return user_schema_column_only.dump(user), 200
 
+    @admin_required
     def put(self, did: int):
         """
         Обновление пользователя
@@ -56,6 +62,7 @@ class UserView(Resource):
             return "", 204
         return "", 404
 
+    @admin_required
     def delete(self, did: int):
         """
         Удаление пользователя

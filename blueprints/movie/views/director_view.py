@@ -3,6 +3,8 @@ from flask_restx import (Resource,
                          Namespace)
 from container import director_service
 from blueprints.movie.dao.model.director import DirectorSchema
+from helpers.auth_helper import (auth_required,
+                                 admin_required)
 
 director_schema = DirectorSchema()
 directors_schema = DirectorSchema(many=True)
@@ -13,6 +15,7 @@ director_ns = Namespace('directors')
 @director_ns.route('/')
 class DirectorsView(Resource):
 
+    @auth_required
     def get(self):
         """
         Возвращает список режиссеров
@@ -20,6 +23,7 @@ class DirectorsView(Resource):
         directors = director_service.get_all()
         return directors_schema.dump(directors), 200
 
+    @admin_required
     def post(self):
         """
         Добавляет режиссера
@@ -32,6 +36,7 @@ class DirectorsView(Resource):
 @director_ns.route('/<int:did>/')
 class DirectorView(Resource):
 
+    @auth_required
     def get(self, did: int):
         """
         Возвращает режиссера по id
@@ -39,6 +44,7 @@ class DirectorView(Resource):
         director = director_service.get_one(did)
         return director_schema.dump(director), 200
 
+    @admin_required
     def put(self, did: int):
         """
         Обновление режиссера
@@ -49,6 +55,7 @@ class DirectorView(Resource):
             return "", 204
         return "", 404
 
+    @admin_required
     def delete(self, did: int):
         """
         Удаление режиссера
