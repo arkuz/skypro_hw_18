@@ -3,6 +3,8 @@ from flask_restx import (Resource,
                          Namespace)
 from container import genre_service
 from blueprints.movie.dao.model.genre import GenreSchema
+from helpers.auth_helper import (auth_required,
+                                 admin_required)
 
 genre_schema = GenreSchema()
 genres_schema = GenreSchema(many=True)
@@ -12,6 +14,8 @@ genre_ns = Namespace('genres')
 
 @genre_ns.route('/')
 class GenresView(Resource):
+
+    @auth_required
     def get(self):
         """
         Возвращает список жанров
@@ -19,6 +23,7 @@ class GenresView(Resource):
         genres = genre_service.get_all()
         return genres_schema.dump(genres), 200
 
+    @admin_required
     def post(self):
         """
         Добавляет жанр
@@ -31,6 +36,7 @@ class GenresView(Resource):
 @genre_ns.route('/<int:gid>/')
 class GenreView(Resource):
 
+    @auth_required
     def get(self, gid: int):
         """
         Возвращает жанр по id
@@ -38,6 +44,7 @@ class GenreView(Resource):
         genre = genre_service.get_one(gid)
         return genre_schema.dump(genre), 200
 
+    @admin_required
     def put(self, gid: int):
         """
         Обновление жанра
@@ -48,6 +55,7 @@ class GenreView(Resource):
             return "", 204
         return "", 404
 
+    @admin_required
     def delete(self, gid: int):
         """
         Удаление жанра

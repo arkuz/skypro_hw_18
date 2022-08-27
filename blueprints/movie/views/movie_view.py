@@ -3,6 +3,8 @@ from flask_restx import (Resource,
                          Namespace)
 from container import movie_service
 from blueprints.movie.dao.model.movie import MovieSchema
+from helpers.auth_helper import (auth_required,
+                                 admin_required)
 
 movie_schema = MovieSchema()
 movies_schema = MovieSchema(many=True)
@@ -13,6 +15,7 @@ movie_ns = Namespace('movies')
 @movie_ns.route('/')
 class MoviesView(Resource):
 
+    @auth_required
     def get(self):
         """
         Возвращает список всех фильмов.
@@ -37,6 +40,7 @@ class MoviesView(Resource):
 
         return movies_schema.dump(movies), 200
 
+    @admin_required
     def post(self):
         """
         Добавляет фильм
@@ -49,6 +53,7 @@ class MoviesView(Resource):
 @movie_ns.route('/<int:mid>/')
 class MovieView(Resource):
 
+    @auth_required
     def get(self, mid: int):
         """
         Возвращает фильм по id
@@ -58,6 +63,7 @@ class MovieView(Resource):
             return movie_schema.dump(movie), 200
         return "", 404
 
+    @admin_required
     def put(self, mid: int):
         """
         Обновление фильма
@@ -68,6 +74,7 @@ class MovieView(Resource):
             return "", 204
         return "", 404
 
+    @admin_required
     def delete(self, mid: int):
         """
         Удаление фильма
